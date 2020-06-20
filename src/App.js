@@ -1,8 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { isWaiting, anyWaiting } from 'redux-waiters';
+import { addNumberCreator, addNumberAction, minusNumberCreator, minusNumberAction } from './reducers/counter';
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
+function App({ adding, minusing, anyLoading, addNumber, minusNumber, counter }) {
   return (
     <div className="App">
       <header className="App-header">
@@ -18,9 +21,39 @@ function App() {
         >
           Learn React
         </a>
+
+        <p>Number: {counter}</p>
+        <button onClick={addNumber}>Add number</button>
+        <button onClick={minusNumber}>Minus number</button>
+        {adding ? 'Adding...' : ''}
+        {minusing ? 'Minusing...' : ''}
+        {anyLoading && <p>Any loading...</p>}
       </header>
     </div>
   );
 }
 
-export default App;
+const isAddingNumerSelector = isWaiting(addNumberAction.id);
+const isMinusingNumerSelector = isWaiting(minusNumberAction.id);
+
+const mapStateToProps = (state) => {
+  const {
+    waiter,
+    counter: { counter }
+  } = state;
+  return {
+    adding: isAddingNumerSelector(waiter),
+    minusing: isMinusingNumerSelector(waiter),
+    anyLoading: anyWaiting(waiter),
+    counter
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addNumber: () => dispatch(addNumberCreator()),
+    minusNumber: () => dispatch(minusNumberCreator())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
