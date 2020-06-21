@@ -1,5 +1,4 @@
-import { createReducer } from 'redux-act';
-import { createActionResources } from 'redux-waiters';
+import { createActionResources, createReducer } from 'redux-waiters';
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms, ms));
 
